@@ -25,7 +25,7 @@ public sealed class ScheduleWorker(
             foreach (var w in await workflows.GetAllAsync(stoppingToken))
             {
                 if (!w.Enabled || w.Trigger.Type != TriggerType.Schedule || w.Schedule is null) continue;
-                var next = nextRuns.GetValueOrDefault(w.Id, w.Schedule.StartUtc ?? now);
+                var next = nextRuns.GetValueOrDefault(w.Id, w.Schedule.StartUtc is { } startUtc && startUtc > now ? startUtc : now.AddSeconds(w.Schedule.IntervalSeconds));
                 if (next > now) continue;
                 await queue.EnqueueAsync(new(Guid.NewGuid(), w.Id, new JObject { { "trigger", "schedule" }, { "scheduledUtc", now } }), stoppingToken);
                 nextRuns[w.Id] = now.AddSeconds(w.Schedule.IntervalSeconds);
