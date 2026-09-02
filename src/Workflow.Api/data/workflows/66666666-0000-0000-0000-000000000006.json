@@ -1,0 +1,65 @@
+{
+  "Id": "66666666-0000-0000-0000-000000000006",
+  "Name": "Demo — Extract Data from XML Response",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Manual"
+  },
+  "Schedule": null,
+  "Steps": [
+    {
+      "$comment": "STEP 1 — call an endpoint that returns XML",
+      "type": "http",
+      "Id": "get-product-xml",
+      "Name": "GET Product (XML response)",
+      "Method": "GET",
+      "Url": "https://api.example.com/products/{{input.productId}}",
+      "Headers": {
+        "Accept": "application/xml"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "The XML response looks like:",
+      "$commentXml": "<product><id>42</id><name>Widget</name><price>9.99</price><stock><warehouse>A</warehouse><qty>150</qty></stock></product>",
+      "$commentConverted": "XML is automatically converted to JSON so you use the exact same dot-notation paths:",
+      "$commentJson": "{ \"product\": { \"id\": \"42\", \"name\": \"Widget\", \"price\": \"9.99\", \"stock\": { \"warehouse\": \"A\", \"qty\": \"150\" } } }",
+
+      "type": "script",
+      "Id": "extract-xml-fields",
+      "Name": "Extract fields from the XML body",
+      "Assign": {
+        "productId":   "{{steps.get-product-xml.output.body.product.id}}",
+        "productName": "{{steps.get-product-xml.output.body.product.name}}",
+        "price":       "{{steps.get-product-xml.output.body.product.price}}",
+        "warehouse":   "{{steps.get-product-xml.output.body.product.stock.warehouse}}",
+        "stockQty":    "{{steps.get-product-xml.output.body.product.stock.qty}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 3 — use the extracted XML values in a follow-up JSON POST",
+      "type": "http",
+      "Id": "create-order",
+      "Name": "POST Order using XML-sourced data",
+      "Method": "POST",
+      "Url": "https://api.example.com/orders",
+      "Headers": {
+        "Content-Type": "application/json"
+      },
+      "Body": {
+        "productId":   "{{variables.productId}}",
+        "productName": "{{variables.productName}}",
+        "unitPrice":   "{{variables.price}}",
+        "quantity":    "{{input.quantity}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}

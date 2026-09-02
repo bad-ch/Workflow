@@ -1,0 +1,121 @@
+{
+  "Id": "44444444-0000-0000-0000-000000000004",
+  "Name": "Scheduled — Daily Data Sync",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Schedule"
+  },
+  "Schedule": {
+    "IntervalSeconds": 86400,
+    "StartUtc": "2025-01-01T02:00:00+00:00"
+  },
+  "Steps": [
+    {
+      "$comment": "STEP 1 — fetch a token from the auth server using credentials from the run input",
+      "type": "http",
+      "Id": "get-token",
+      "Name": "Authenticate",
+      "Method": "POST",
+      "Url": "https://api.example.com/auth/token",
+      "Headers": {
+        "Content-Type": "application/json"
+      },
+      "Body": {
+        "clientId": "{{input.clientId}}",
+        "clientSecret": "{{input.clientSecret}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    },
+    {
+      "$comment": "STEP 2 — use the token from step 1 (steps.get-token.output.body.accessToken) to fetch records",
+      "type": "http",
+      "Id": "fetch-source",
+      "Name": "Fetch Source Records",
+      "Method": "GET",
+      "Url": "https://api.example.com/source/records",
+      "Headers": {
+        "Authorization": "Bearer {{steps.get-token.output.body.accessToken}}"
+      },
+      "TimeoutSeconds": 30,
+      "ContinueOnError": false
+    },
+    {
+      "$comment": "STEP 3 — store the record count in a variable so later steps can reference it easily",
+      "type": "script",
+      "Id": "capture-count",
+      "Name": "Capture Record Count",
+      "Assign": {
+        "recordCount": "{{steps.fetch-source.output.body.count}}"
+      },
+      "ContinueOnError": false
+    },
+    {
+      "$comment": "STEP 4 — only push if there is something to sync (condition on the variable set in step 3)",
+      "type": "condition",
+      "Id": "has-records",
+      "Name": "Has Records?",
+      "Expression": "variables.recordCount",
+      "Then": [
+        {
+          "$comment": "STEP 4a — send the records array AND the token from step 1 to the destination",
+          "type": "http",
+          "Id": "push-to-dest",
+          "Name": "Push to Destination",
+          "Method": "POST",
+          "Url": "https://api.example.com/destination/import",
+          "Headers": {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer {{steps.get-token.output.body.accessToken}}"
+          },
+          "Body": {
+            "records": "{{steps.fetch-source.output.body.records}}",
+            "sourceCount": "{{variables.recordCount}}"
+          },
+          "TimeoutSeconds": 60,
+          "ContinueOnError": false
+        },
+        {
+          "$comment": "STEP 4b — capture the destination's import ID from the response BODY, and the request-id from the response HEADER",
+          "type": "script",
+          "Id": "capture-import-id",
+          "Name": "Capture Import ID",
+          "Assign": {
+            "importId":    "{{steps.push-to-dest.output.body.importId}}",
+            "requestId":   "{{steps.push-to-dest.output.headers.X-Request-Id}}",
+            "contentType": "{{steps.push-to-dest.output.headers.Content-Type}}"
+          },
+          "ContinueOnError": false
+        },
+        {
+          "$comment": "STEP 4c — poll the import status using the importId captured in step 4b",
+          "type": "http",
+          "Id": "check-import-status",
+          "Name": "Check Import Status",
+          "Method": "GET",
+          "Url": "https://api.example.com/destination/imports/{{variables.importId}}",
+          "Headers": {
+            "Authorization": "Bearer {{steps.get-token.output.body.accessToken}}"
+          },
+          "TimeoutSeconds": 15,
+          "ContinueOnError": true
+        }
+      ],
+      "Else": [
+        {
+          "type": "script",
+          "Id": "no-op",
+          "Name": "Nothing to Sync",
+          "Assign": {
+            "recordCount": "0"
+          },
+          "ContinueOnError": false
+        }
+      ],
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-03-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-03-01T00:00:00+00:00"
+}
+

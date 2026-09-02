@@ -1,0 +1,120 @@
+{
+  "Id": "aaaaaaaa-0000-0000-0000-00000000000a",
+  "Name": "Demo — All Request Body Types",
+  "Enabled": true,
+  "Trigger": { "Type": "Manual" },
+  "Schedule": null,
+  "Steps": [
+    {
+      "$comment": "──────────────────────────────────────────────────────────────",
+      "$comment2": "1. JSON (default) — BodyType omitted or set to 'Json'",
+      "$comment3": "   Body is a JSON object; all values are template-resolved.",
+      "$comment4": "   Sends: Content-Type: application/json",
+      "type": "http",
+      "Id": "send-json",
+      "Name": "POST JSON body",
+      "Method": "POST",
+      "Url": "https://api.example.com/json",
+      "BodyType": "Json",
+      "Body": {
+        "correlationId": "{{$guid}}",
+        "name": "{{input.name}}",
+        "timestamp": "{{$utcnow}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": true
+    },
+
+    {
+      "$comment": "──────────────────────────────────────────────────────────────",
+      "$comment2": "2. XML — BodyType must be 'Xml'",
+      "$comment3": "   Body is a plain string containing XML markup.",
+      "$comment4": "   Sends: Content-Type: application/xml",
+      "type": "http",
+      "Id": "send-xml",
+      "Name": "POST XML body",
+      "Method": "POST",
+      "Url": "https://api.example.com/xml",
+      "BodyType": "Xml",
+      "Body": "<order><id>{{input.orderId}}</id><customer>{{input.name}}</customer><timestamp>{{$utcnow}}</timestamp></order>",
+      "TimeoutSeconds": 10,
+      "ContinueOnError": true
+    },
+
+    {
+      "$comment": "──────────────────────────────────────────────────────────────",
+      "$comment2": "3. Plain text — BodyType must be 'Text'",
+      "$comment3": "   Body is a plain string.",
+      "$comment4": "   Sends: Content-Type: text/plain",
+      "type": "http",
+      "Id": "send-text",
+      "Name": "POST text/plain body",
+      "Method": "POST",
+      "Url": "https://api.example.com/text",
+      "BodyType": "Text",
+      "Body": "Order {{input.orderId}} submitted by {{input.name}} at {{$utcnow}}.",
+      "TimeoutSeconds": 10,
+      "ContinueOnError": true
+    },
+
+    {
+      "$comment": "──────────────────────────────────────────────────────────────",
+      "$comment2": "4. Form — BodyType must be 'Form'",
+      "$comment3": "   Body is a flat JSON object; sent as key=value pairs.",
+      "$comment4": "   Sends: Content-Type: application/x-www-form-urlencoded",
+      "type": "http",
+      "Id": "send-form",
+      "Name": "POST URL-encoded form",
+      "Method": "POST",
+      "Url": "https://api.example.com/form",
+      "BodyType": "Form",
+      "Body": {
+        "orderId": "{{input.orderId}}",
+        "name": "{{input.name}}",
+        "ts": "{{$timestamp}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": true
+    },
+
+    {
+      "$comment": "──────────────────────────────────────────────────────────────",
+      "$comment2": "5. Multipart/form-data — BodyType must be 'Multipart'",
+      "$comment3": "   Body is a JSON object.",
+      "$comment4": "   String values → text parts.",
+      "$comment5": "   Values starting with 'base64:' → binary file parts (ByteArrayContent).",
+      "$comment6": "   Sends: Content-Type: multipart/form-data",
+      "type": "http",
+      "Id": "send-multipart",
+      "Name": "POST multipart/form-data",
+      "Method": "POST",
+      "Url": "https://api.example.com/upload",
+      "BodyType": "Multipart",
+      "Body": {
+        "orderId": "{{input.orderId}}",
+        "submittedBy": "{{input.name}}",
+        "attachment": "base64:{{input.fileBase64}}"
+      },
+      "TimeoutSeconds": 30,
+      "ContinueOnError": true
+    },
+
+    {
+      "$comment": "──────────────────────────────────────────────────────────────",
+      "$comment2": "6. Binary — BodyType must be 'Binary'",
+      "$comment3": "   Body is a Base64-encoded string; decoded to raw bytes before sending.",
+      "$comment4": "   Sends: Content-Type: application/octet-stream",
+      "type": "http",
+      "Id": "send-binary",
+      "Name": "POST binary (octet-stream)",
+      "Method": "POST",
+      "Url": "https://api.example.com/binary",
+      "BodyType": "Binary",
+      "Body": "{{input.fileBase64}}",
+      "TimeoutSeconds": 30,
+      "ContinueOnError": true
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}

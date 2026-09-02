@@ -1,0 +1,18 @@
+trigger:
+- master
+- release/*
+
+pool:
+  vmImage: windows-latest
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: sdk
+    version: 10.x
+- powershell: dotnet restore .\Octave.Workflow.slnx
+  displayName: Restore
+- powershell: dotnet build .\Octave.Workflow.slnx -c Release --no-restore
+  displayName: Build
+- powershell: dotnet test .\Octave.Workflow.slnx -c Release --no-build --logger trx
+  displayName: Test

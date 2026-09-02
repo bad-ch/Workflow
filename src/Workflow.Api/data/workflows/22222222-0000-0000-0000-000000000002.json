@@ -1,0 +1,50 @@
+{
+  "Id": "22222222-0000-0000-0000-000000000002",
+  "Name": "Webhook — Create User Notification",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Webhook",
+    "WebhookKey": "my-secret-webhook-key"
+  },
+  "Schedule": null,
+  "Steps": [
+    {
+      "type": "condition",
+      "Id": "check-email",
+      "Name": "Check Email Present",
+      "Expression": "{{input.email}}",
+      "Then": [
+        {
+          "type": "http",
+          "Id": "send-welcome",
+          "Name": "POST Welcome Email",
+          "Method": "POST",
+          "Url": "https://api.example.com/emails/welcome",
+          "Headers": {
+            "Content-Type": "application/json"
+          },
+          "Body": {
+            "to": "{{input.email}}",
+            "name": "{{input.name}}"
+          },
+          "TimeoutSeconds": 15,
+          "ContinueOnError": false
+        }
+      ],
+      "Else": [
+        {
+          "type": "script",
+          "Id": "set-skip-reason",
+          "Name": "Record Skip Reason",
+          "Assign": {
+            "skipReason": "No email address provided"
+          },
+          "ContinueOnError": false
+        }
+      ],
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-01-15T09:00:00+00:00",
+  "UpdatedUtc": "2025-01-15T09:00:00+00:00"
+}

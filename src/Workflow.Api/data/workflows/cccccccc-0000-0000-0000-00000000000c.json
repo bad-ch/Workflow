@@ -1,0 +1,44 @@
+{
+  "Id": "cccccccc-0000-0000-0000-00000000000c",
+  "Name": "WMS — List Available Layers",
+  "Enabled": true,
+  "Trigger": { "Type": "Manual" },
+  "Schedule": null,
+  "Steps": [
+    {
+      "type": "http",
+      "Id": "get-capabilities",
+      "Name": "GET WMS GetCapabilities (XML)",
+      "Method": "GET",
+      "Url": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities",
+      "Headers": {
+        "Accept": "text/xml"
+      },
+      "TimeoutSeconds": 30,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "The XML is auto-converted to JSON. WMS uses a default namespace so layer nodes",
+      "$comment2": "live at: body.WMS_Capabilities.Capability.Layer.Layer[]",
+      "$comment3": "Each layer has a Name and Title child element.",
+      "type": "script",
+      "Id": "extract-service-info",
+      "Name": "Extract service metadata",
+      "Assign": {
+        "serviceTitle":   "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.Title}}",
+        "wmsVersion":     "{{steps.get-capabilities.output.body.WMS_Capabilities.@version}}",
+        "maxWidth":       "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.MaxWidth}}",
+        "maxHeight":      "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.MaxHeight}}",
+        "onlineResource": "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.OnlineResource.@xlink:href}}",
+        "rootLayerTitle": "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Title}}",
+        "layerName":      "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Layer.Name}}",
+        "layerTitle":     "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Layer.Title}}",
+        "layerCrs":       "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Layer.CRS}}"
+      },
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}

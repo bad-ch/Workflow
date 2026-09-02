@@ -1,0 +1,54 @@
+@host = https://localhost:7042
+
+### 1 — List all workflows
+GET {{host}}/api/workflows
+Accept: application/json
+
+###
+
+### 2 — Trigger the WMS layer-listing workflow
+# Copy the runId from the response, paste into request 3
+POST {{host}}/api/workflows/cccccccc-0000-0000-0000-00000000000c/runs
+Content-Type: application/json
+
+{}
+
+###
+
+### 3 — Fetch the run result  (replace {runId} with the value from step 2)
+# @name runResult
+GET {{host}}/api/runs/{runId}
+Accept: application/json
+
+###
+
+### 4 — Create a new workflow (optional / extend as needed)
+POST {{host}}/api/workflows
+Content-Type: application/json
+
+{
+  "name": "My new workflow",
+  "enabled": true,
+  "trigger": { "type": "Manual" },
+  "schedule": null,
+  "steps": [
+    {
+      "type": "http",
+      "id": "ping",
+      "name": "Health check",
+      "method": "GET",
+      "url": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities",
+      "timeoutSeconds": 15
+    },
+    {
+      "type": "script",
+      "id": "extract",
+      "name": "Extract layer name",
+      "assign": {
+        "layerName": "{{steps.ping.output.body.WMS_Capabilities.Capability.Layer.Layer.Name}}",
+        "layerTitle": "{{steps.ping.output.body.WMS_Capabilities.Capability.Layer.Layer.Title}}"
+      }
+    }
+  ]
+}
+

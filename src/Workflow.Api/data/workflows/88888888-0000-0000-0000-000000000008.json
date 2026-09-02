@@ -1,0 +1,91 @@
+{
+  "Id": "88888888-0000-0000-0000-000000000008",
+  "Name": "Demo — TLS Certificate Inspection",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Manual"
+  },
+  "Schedule": null,
+  "Steps": [
+    {
+      "$comment": "STEP 1 — any HTTPS request automatically includes a 'certificate' object in the output",
+      "type": "http",
+      "Id": "call-api",
+      "Name": "Call HTTPS endpoint",
+      "Method": "GET",
+      "Url": "https://api.example.com/health",
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "The certificate object shape:",
+      "$commentShape": {
+        "subject":            "CN=api.example.com, O=Example Inc, C=US",
+        "issuer":             "CN=Let's Encrypt Authority X3, O=Let's Encrypt, C=US",
+        "serialNumber":       "03A1B2...",
+        "thumbprint":         "AABBCC...",
+        "notBeforeUtc":       "2025-01-01T00:00:00.0000000Z",
+        "expiresUtc":         "2025-04-01T00:00:00.0000000Z",
+        "daysUntilExpiry":    87,
+        "isExpired":          false,
+        "expiresSoon":        false,
+        "signatureAlgorithm": "sha256RSA",
+        "publicKeyAlgorithm": "RSA",
+        "keySize":            2048,
+        "cipherSuite":        "TLS_AES_128_GCM_SHA256",
+        "subjectAltNames":    ["api.example.com", "www.example.com"],
+        "parsedSubject":      { "CN": "api.example.com", "O": "Example Inc", "C": "US" },
+        "parsedIssuer":       { "CN": "Let's Encrypt Authority X3", "O": "Let's Encrypt", "C": "US" }
+      },
+
+      "type": "script",
+      "Id": "extract-cert",
+      "Name": "Extract certificate fields",
+      "Assign": {
+        "certSubject":      "{{steps.call-api.output.certificate.subject}}",
+        "certOrg":          "{{steps.call-api.output.certificate.parsedSubject.O}}",
+        "certCountry":      "{{steps.call-api.output.certificate.parsedSubject.C}}",
+        "certCN":           "{{steps.call-api.output.certificate.parsedSubject.CN}}",
+        "certIssuer":       "{{steps.call-api.output.certificate.parsedIssuer.O}}",
+        "certExpiresUtc":   "{{steps.call-api.output.certificate.expiresUtc}}",
+        "certDaysLeft":     "{{steps.call-api.output.certificate.daysUntilExpiry}}",
+        "certIsExpired":    "{{steps.call-api.output.certificate.isExpired}}",
+        "certExpiresSoon":  "{{steps.call-api.output.certificate.expiresSoon}}",
+        "certThumbprint":   "{{steps.call-api.output.certificate.thumbprint}}",
+        "certKeySize":      "{{steps.call-api.output.certificate.keySize}}",
+        "certFirstSan":     "{{steps.call-api.output.certificate.subjectAltNames[0]}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 3 — alert if the certificate expires within 30 days",
+      "type": "condition",
+      "Id": "check-expiry",
+      "Name": "Certificate expiring soon?",
+      "Expression": "steps.call-api.output.certificate.expiresSoon",
+      "Then": [
+        {
+          "type": "http",
+          "Id": "send-alert",
+          "Name": "POST Expiry Alert",
+          "Method": "POST",
+          "Url": "https://api.example.com/alerts",
+          "Headers": { "Content-Type": "application/json" },
+          "Body": {
+            "level":   "warning",
+            "message": "Certificate for {{variables.certCN}} expires on {{variables.certExpiresUtc}} ({{variables.certDaysLeft}} days remaining)",
+            "issuer":  "{{variables.certIssuer}}"
+          },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": true
+        }
+      ],
+      "Else": [],
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}

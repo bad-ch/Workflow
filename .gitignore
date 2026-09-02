@@ -1,0 +1,8 @@
+bin/
+obj/
+.vs/
+*.user
+artifacts/
+data/workflows/*.json
+data/results/*.json
+!data/**/.gitkeep

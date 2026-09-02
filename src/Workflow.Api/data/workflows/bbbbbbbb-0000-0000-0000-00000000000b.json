@@ -1,0 +1,125 @@
+{
+  "Id": "bbbbbbbb-0000-0000-0000-00000000000b",
+  "Name": "Demo — Parallel Steps",
+  "Enabled": true,
+  "Trigger": { "Type": "Manual" },
+  "Schedule": null,
+  "Steps": [
+    {
+      "$comment": "STEP 1 — generate a shared correlation ID before firing parallel branches",
+      "type": "script",
+      "Id": "init",
+      "Name": "Generate Correlation ID",
+      "Assign": {
+        "correlationId": "{{$guid}}",
+        "startedAt": "{{$utcnow}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 2 — parallel: all branches run at the same time; workflow resumes only after ALL finish",
+      "$comment2": "Each branch can be any valid step type: http, script, condition, delay, even nested parallel.",
+      "$comment3": "Results land at: steps.{parallelStepId}.branches.{branchId}.output",
+      "$comment4": "Individual branch outputs are also merged into steps.{branchId}.output as normal.",
+      "type": "parallel",
+      "Id": "fetch-all",
+      "Name": "Fetch user, orders and inventory in parallel",
+      "ContinueOnError": false,
+      "Steps": [
+        {
+          "type": "http",
+          "Id": "fetch-user",
+          "Name": "GET User",
+          "Method": "GET",
+          "Url": "https://api.example.com/users/{{input.userId}}",
+          "Headers": { "X-Correlation-Id": "{{variables.correlationId}}" },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": false
+        },
+        {
+          "type": "http",
+          "Id": "fetch-orders",
+          "Name": "GET Orders",
+          "Method": "GET",
+          "Url": "https://api.example.com/orders?userId={{input.userId}}",
+          "Headers": { "X-Correlation-Id": "{{variables.correlationId}}" },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": false
+        },
+        {
+          "type": "http",
+          "Id": "fetch-inventory",
+          "Name": "GET Inventory",
+          "Method": "GET",
+          "Url": "https://api.example.com/inventory/{{input.productId}}",
+          "Headers": { "X-Correlation-Id": "{{variables.correlationId}}" },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": true
+        }
+      ]
+    },
+
+    {
+      "$comment": "STEP 3 — all three results are now available; combine them into one POST",
+      "$comment2": "Access via: steps.fetch-all.branches.{branchId}.output  OR  steps.{branchId}.output",
+      "type": "http",
+      "Id": "create-summary",
+      "Name": "POST combined summary",
+      "Method": "POST",
+      "Url": "https://api.example.com/summaries",
+      "Headers": { "Content-Type": "application/json" },
+      "Body": {
+        "correlationId":   "{{variables.correlationId}}",
+        "userId":          "{{steps.fetch-user.output.body.id}}",
+        "userName":        "{{steps.fetch-user.output.body.name}}",
+        "orderCount":      "{{steps.fetch-orders.output.body.count}}",
+        "inventoryQty":    "{{steps.fetch-inventory.output.body.qty}}",
+        "allSucceeded":    "{{steps.fetch-all.output.allSucceeded}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 4 — parallel with mixed step types to show it is not limited to HTTP",
+      "type": "parallel",
+      "Id": "notify-all",
+      "Name": "Fire notifications in parallel",
+      "ContinueOnError": true,
+      "Steps": [
+        {
+          "type": "http",
+          "Id": "notify-email",
+          "Name": "POST email notification",
+          "Method": "POST",
+          "Url": "https://api.example.com/notifications/email",
+          "Headers": { "Content-Type": "application/json" },
+          "Body": { "to": "{{steps.fetch-user.output.body.email}}", "subject": "Your summary is ready" },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": true
+        },
+        {
+          "type": "http",
+          "Id": "notify-slack",
+          "Name": "POST Slack message",
+          "Method": "POST",
+          "Url": "https://hooks.slack.example.com/services/xxx",
+          "Headers": { "Content-Type": "application/json" },
+          "Body": { "text": "Summary created for {{steps.fetch-user.output.body.name}}" },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": true
+        },
+        {
+          "type": "delay",
+          "Id": "audit-delay",
+          "Name": "Short audit delay",
+          "Milliseconds": 200,
+          "ContinueOnError": true
+        }
+      ]
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}

@@ -1,0 +1,82 @@
+{
+  "Id": "99999999-0000-0000-0000-000000000009",
+  "Name": "Demo — Built-in Functions & Response Time",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Manual"
+  },
+  "Schedule": null,
+  "Steps": [
+    {
+      "$comment": "STEP 1 — generate built-in values before the HTTP call",
+      "type": "script",
+      "Id": "init",
+      "Name": "Generate IDs and Timestamps",
+      "Assign": {
+        "correlationId": "{{$guid}}",
+        "requestedAt":   "{{$utcnow}}",
+        "requestDate":   "{{$date}}",
+        "epochSeconds":  "{{$timestamp}}",
+        "epochMs":       "{{$timestampMs}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 2 — use generated values as request headers/body; responseTimeMs is automatically captured",
+      "type": "http",
+      "Id": "call-api",
+      "Name": "Call API with Correlation ID",
+      "Method": "POST",
+      "Url": "https://api.example.com/orders",
+      "Headers": {
+        "Content-Type":    "application/json",
+        "X-Correlation-Id": "{{variables.correlationId}}",
+        "X-Request-Date":   "{{variables.requestDate}}"
+      },
+      "Body": {
+        "correlationId": "{{variables.correlationId}}",
+        "requestedAt":   "{{variables.requestedAt}}",
+        "orderId":       "{{input.orderId}}"
+      },
+      "TimeoutSeconds": 15,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 3 — capture response time and generate a completion timestamp",
+      "type": "script",
+      "Id": "capture-timing",
+      "Name": "Capture Timing Metrics",
+      "Assign": {
+        "responseTimeMs":  "{{steps.call-api.output.responseTimeMs}}",
+        "completedAt":     "{{$utcnow}}",
+        "completedEpoch":  "{{$timestamp}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 4 — forward metrics to a telemetry endpoint",
+      "type": "http",
+      "Id": "send-telemetry",
+      "Name": "POST Telemetry",
+      "Method": "POST",
+      "Url": "https://api.example.com/telemetry",
+      "Headers": {
+        "Content-Type": "application/json"
+      },
+      "Body": {
+        "correlationId":   "{{variables.correlationId}}",
+        "requestedAt":     "{{variables.requestedAt}}",
+        "completedAt":     "{{variables.completedAt}}",
+        "responseTimeMs":  "{{variables.responseTimeMs}}",
+        "statusCode":      "{{steps.call-api.output.statusCode}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": true
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}

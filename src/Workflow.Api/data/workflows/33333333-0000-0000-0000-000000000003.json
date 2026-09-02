@@ -1,0 +1,71 @@
+{
+  "Id": "33333333-0000-0000-0000-000000000003",
+  "Name": "Manual — Batch Report Generator",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Manual"
+  },
+  "Schedule": null,
+  "Steps": [
+    {
+      "type": "http",
+      "Id": "fetch-orders",
+      "Name": "Fetch Orders List",
+      "Method": "GET",
+      "Url": "https://api.example.com/orders?status={{input.status}}",
+      "TimeoutSeconds": 30,
+      "ContinueOnError": false
+    },
+    {
+      "type": "loop",
+      "Id": "process-orders",
+      "Name": "Process Each Order",
+      "ItemsExpression": "{{steps.fetch-orders.output.body.items}}",
+      "ItemVariable": "order",
+      "MaxIterations": 100,
+      "Steps": [
+        {
+          "type": "http",
+          "Id": "post-report-row",
+          "Name": "Post Report Row",
+          "Method": "POST",
+          "Url": "https://api.example.com/reports",
+          "Headers": {
+            "Content-Type": "application/json"
+          },
+          "Body": {
+            "orderId": "{{order.id}}",
+            "total": "{{order.total}}"
+          },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": true
+        }
+      ],
+      "ContinueOnError": false
+    },
+    {
+      "type": "delay",
+      "Id": "cooldown",
+      "Name": "Cooldown Before Notify",
+      "Milliseconds": 500,
+      "ContinueOnError": false
+    },
+    {
+      "type": "http",
+      "Id": "notify-complete",
+      "Name": "Notify Report Complete",
+      "Method": "POST",
+      "Url": "https://api.example.com/notifications",
+      "Headers": {
+        "Content-Type": "application/json"
+      },
+      "Body": {
+        "message": "Batch report completed"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": true
+    }
+  ],
+  "CreatedUtc": "2025-02-10T12:00:00+00:00",
+  "UpdatedUtc": "2025-02-10T12:00:00+00:00"
+}

@@ -1,0 +1,74 @@
+{
+  "Id": "77777777-0000-0000-0000-000000000007",
+  "Name": "Demo — Extract Data from HTML Response",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Manual"
+  },
+  "Schedule": null,
+  "Steps": [
+    {
+      "$comment": "STEP 1 — fetch a page that returns text/html",
+      "type": "http",
+      "Id": "get-page",
+      "Name": "GET HTML Page",
+      "Method": "GET",
+      "Url": "https://api.example.com/products/{{input.productId}}",
+      "Headers": {
+        "Accept": "text/html"
+      },
+      "TimeoutSeconds": 15,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "The HTML response is automatically parsed into this structure:",
+      "$commentStructure": {
+        "title":    "Page title string",
+        "meta":     { "description": "...", "keywords": "..." },
+        "headings": { "h1": ["..."], "h2": ["...", "..."] },
+        "links":    [ { "text": "Click here", "href": "/path" } ],
+        "tables":   [ [ ["Header A", "Header B"], ["Row1A", "Row1B"] ] ],
+        "text":     "Full visible body text with all HTML stripped"
+      },
+
+      "type": "script",
+      "Id": "extract-html-fields",
+      "Name": "Extract fields from the HTML body",
+      "Assign": {
+        "pageTitle":       "{{steps.get-page.output.body.title}}",
+        "metaDescription": "{{steps.get-page.output.body.meta.description}}",
+        "metaKeywords":    "{{steps.get-page.output.body.meta.keywords}}",
+        "firstH1":         "{{steps.get-page.output.body.headings.h1[0]}}",
+        "secondH2":        "{{steps.get-page.output.body.headings.h2[1]}}",
+        "firstLinkText":   "{{steps.get-page.output.body.links[0].text}}",
+        "firstLinkHref":   "{{steps.get-page.output.body.links[0].href}}",
+        "tableCell_R1C1":  "{{steps.get-page.output.body.tables[0][1][0]}}",
+        "fullText":        "{{steps.get-page.output.body.text}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "STEP 3 — forward extracted HTML data to a JSON API",
+      "type": "http",
+      "Id": "post-metadata",
+      "Name": "POST Page Metadata",
+      "Method": "POST",
+      "Url": "https://api.example.com/page-index",
+      "Headers": {
+        "Content-Type": "application/json"
+      },
+      "Body": {
+        "title":       "{{variables.pageTitle}}",
+        "description": "{{variables.metaDescription}}",
+        "heading":     "{{variables.firstH1}}",
+        "sourceUrl":   "{{input.url}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}

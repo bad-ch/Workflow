@@ -1,0 +1,118 @@
+{
+  "Id": "dddddddd-1111-1111-1111-11111111111d",
+  "Name": "WMS — Get Map with Layer Validation",
+  "Enabled": true,
+  "Trigger": { "Type": "Manual" },
+  "Schedule": null,
+  "Steps": [
+    {
+      "type": "http",
+      "Id": "get-capabilities",
+      "Name": "GET WMS GetCapabilities (XML)",
+      "Method": "GET",
+      "Url": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities",
+      "Headers": {
+        "Accept": "text/xml"
+      },
+      "TimeoutSeconds": 30,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "The XML is auto-converted to JSON. WMS uses a default namespace so layer nodes",
+      "$comment2": "live at: body.WMS_Capabilities.Capability.Layer.Layer[]",
+      "$comment3": "Extract service info and layer details for validation",
+      "type": "script",
+      "Id": "extract-service-info",
+      "Name": "Extract service metadata",
+      "Assign": {
+        "serviceTitle":   "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.Title}}",
+        "wmsVersion":     "{{steps.get-capabilities.output.body.WMS_Capabilities.@version}}",
+        "maxWidth":       "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.MaxWidth}}",
+        "maxHeight":      "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.MaxHeight}}",
+        "onlineResource": "{{steps.get-capabilities.output.body.WMS_Capabilities.Service.OnlineResource.@xlink:href}}",
+        "rootLayerTitle": "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Title}}",
+        "layerName":      "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Layer.Name}}",
+        "layerTitle":     "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Layer.Title}}",
+        "layerCrs":       "{{steps.get-capabilities.output.body.WMS_Capabilities.Capability.Layer.Layer.CRS}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "Condition: Check if layer information exists before proceeding to GetMap request",
+      "$comment2": "If layer exists, proceed to GetMap request; otherwise log error",
+      "$comment3": "Expression uses JavaScript with template placeholders resolved at runtime",
+      "type": "condition",
+      "Id": "check-layer-exists",
+      "Name": "Check if Layer Section Exists",
+      "Expression": "{{steps.extract-service-info.output}} != null && {{steps.get-capabilities.output.statusCode}} == 200",
+      "Then": [
+        {
+          "$comment": "Random extent in EPSG:2056 (Swiss LV95 coordinate system)",
+          "$comment2": "BBOX format: minX,minY,maxX,maxY",
+          "$comment3": "Uses $random(min,max) to generate coordinates within Swiss LV95 bounds",
+          "type": "script",
+          "Id": "generate-random-extent",
+          "Name": "Generate Random Extent in EPSG:2056",
+          "Assign": {
+            "minX": "{{$random(2683000,2689000)}}",
+            "minY": "{{$random(1247000,1253000)}}",
+            "maxX": "{{$random(2689001,2695000)}}",
+            "maxY": "{{$random(1253001,1259000)}}",
+            "srs": "EPSG:2056",
+            "width": "800",
+            "height": "600",
+            "format": "image/png"
+          },
+          "ContinueOnError": false
+        },
+
+        {
+          "$comment": "WMS GetMap request using extracted layer name and random extent",
+          "$comment2": "Request a map image with the specified parameters",
+          "type": "http",
+          "Id": "wms-getmap",
+          "Name": "GET WMS GetMap (PNG Image)",
+          "Method": "GET",
+          "Url": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS={{steps.extract-service-info.output.layerName}}&STYLES=&BBOX={{steps.generate-random-extent.output.minX}},{{steps.generate-random-extent.output.minY}},{{steps.generate-random-extent.output.maxX}},{{steps.generate-random-extent.output.maxY}}&WIDTH={{steps.generate-random-extent.output.width}}&HEIGHT={{steps.generate-random-extent.output.height}}&CRS={{steps.generate-random-extent.output.srs}}&FORMAT={{steps.generate-random-extent.output.format}}",
+          "Headers": {
+            "Accept": "image/png"
+          },
+          "TimeoutSeconds": 30,
+          "ContinueOnError": false
+        },
+
+        {
+          "$comment": "Extract map request results for validation",
+          "type": "script",
+          "Id": "extract-map-info",
+          "Name": "Extract Map Response Info",
+          "Assign": {
+            "mapStatusCode": "{{steps.wms-getmap.output.statusCode}}",
+            "mapContentType": "{{steps.wms-getmap.output.headers.Content-Type}}",
+            "layerRequested": "{{steps.extract-service-info.output.layerName}}",
+            "extentUsed": "{{steps.generate-random-extent.output.minX}},{{steps.generate-random-extent.output.minY}},{{steps.generate-random-extent.output.maxX}},{{steps.generate-random-extent.output.maxY}}"
+          },
+          "ContinueOnError": false
+        }
+      ],
+      "Else": [
+        {
+          "$comment": "Layer validation failed - log error state",
+          "type": "script",
+          "Id": "log-layer-error",
+          "Name": "Log Layer Not Found Error",
+          "Assign": {
+            "error": "Layer section not found in WMS capabilities response",
+            "statusCode": "{{steps.get-capabilities.output.statusCode}}",
+            "capabilitiesUrl": "{{steps.get-capabilities.output}}"
+          },
+          "ContinueOnError": false
+        }
+      ]
+    }
+  ],
+  "CreatedUtc": "2025-04-01T12:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T12:00:00+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "Id": "11111111-0000-0000-0000-000000000001",
+  "Name": "Health Check Ping",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Schedule"
+  },
+  "Schedule": {
+    "IntervalSeconds": 60,
+    "StartUtc": null
+  },
+  "Steps": [
+    {
+      "type": "http",
+      "Id": "ping",
+      "Name": "Ping API",
+      "Method": "GET",
+      "Url": "https://api.example.com/health",
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    },
+    {
+      "type": "script",
+      "Id": "log-status",
+      "Name": "Log Status Code",
+      "Assign": {
+        "statusCode": "{{steps.ping.output.statusCode}}"
+      },
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-01-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-01-01T00:00:00+00:00"
+}

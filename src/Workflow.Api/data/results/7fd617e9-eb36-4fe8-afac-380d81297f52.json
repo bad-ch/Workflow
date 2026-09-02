@@ -1,0 +1,698 @@
+{
+  "Id": "7fd617e9-eb36-4fe8-afac-380d81297f52",
+  "WorkflowId": "cccccccc-0000-0000-0000-00000000000c",
+  "Status": 1,
+  "StartedUtc": "2026-08-30T22:13:28.6391537+00:00",
+  "CompletedUtc": "2026-08-30T22:13:28.959978+00:00",
+  "Input": {},
+  "Context": {
+    "input": {},
+    "variables": {
+      "serviceTitle": "WMS Demo Server for MapServer",
+      "wmsVersion": "1.3.0",
+      "maxWidth": "4096",
+      "maxHeight": "4096",
+      "onlineResource": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?",
+      "rootLayerTitle": "WMS Demo Server for MapServer",
+      "layerName": "sections",
+      "layerTitle": "sections",
+      "layerCrs": "EPSG:2056"
+    },
+    "steps": {
+      "get-capabilities": {
+        "status": "succeeded",
+        "output": {
+          "statusCode": 200,
+          "isSuccess": true,
+          "responseTimeMs": 185,
+          "headers": {
+            "Transfer-Encoding": "chunked",
+            "Vary": "Accept-Encoding",
+            "Server": "Microsoft-IIS/10.0",
+            "WWW-Authenticate": "Basic",
+            "X-Powered-By": "ASP.NET",
+            "Date": "Sun, 30 Aug 2026 22:13:28 GMT",
+            "Content-Type": "text/xml"
+          },
+          "body": {
+            "?xml": {
+              "@version": "1.0",
+              "@encoding": "UTF-8",
+              "@standalone": "no"
+            },
+            "WMS_Capabilities": {
+              "@version": "1.3.0",
+              "@xmlns": "http://www.opengis.net/wms",
+              "@xmlns:sld": "http://www.opengis.net/sld",
+              "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+              "@xmlns:ms": "http://mapserver.gis.umn.edu/mapserver",
+              "@xsi:schemaLocation": "http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  http://mapserver.gis.umn.edu/mapserver https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?service=WMS&version=1.3.0&request=GetSchemaExtension",
+              "Service": {
+                "Name": "WMS",
+                "Title": "WMS Demo Server for MapServer",
+                "OnlineResource": {
+                  "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                  "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                },
+                "ContactInformation": "",
+                "MaxWidth": "4096",
+                "MaxHeight": "4096"
+              },
+              "Capability": {
+                "Request": {
+                  "GetCapabilities": {
+                    "Format": "text/xml",
+                    "DCPType": {
+                      "HTTP": {
+                        "Get": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        },
+                        "Post": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "GetMap": {
+                    "Format": [
+                      "image/png",
+                      "image/jpeg",
+                      "image/png; mode=8bit",
+                      "image/vnd.jpeg-png",
+                      "image/vnd.jpeg-png8",
+                      "application/x-pdf",
+                      "image/svg+xml",
+                      "image/tiff",
+                      "application/vnd.mapbox-vector-tile",
+                      "application/x-protobuf",
+                      "application/json"
+                    ],
+                    "DCPType": {
+                      "HTTP": {
+                        "Get": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        },
+                        "Post": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "GetFeatureInfo": {
+                    "Format": [
+                      "text/plain",
+                      "application/vnd.ogc.gml"
+                    ],
+                    "DCPType": {
+                      "HTTP": {
+                        "Get": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        },
+                        "Post": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "sld:DescribeLayer": {
+                    "Format": {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "#text": "text/xml"
+                    },
+                    "DCPType": {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "HTTP": {
+                        "Get": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        },
+                        "Post": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "sld:GetLegendGraphic": {
+                    "Format": [
+                      {
+                        "@xmlns": "http://www.opengis.net/wms",
+                        "#text": "image/png"
+                      },
+                      {
+                        "@xmlns": "http://www.opengis.net/wms",
+                        "#text": "image/jpeg"
+                      },
+                      {
+                        "@xmlns": "http://www.opengis.net/wms",
+                        "#text": "image/png; mode=8bit"
+                      },
+                      {
+                        "@xmlns": "http://www.opengis.net/wms",
+                        "#text": "image/vnd.jpeg-png"
+                      },
+                      {
+                        "@xmlns": "http://www.opengis.net/wms",
+                        "#text": "image/vnd.jpeg-png8"
+                      }
+                    ],
+                    "DCPType": {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "HTTP": {
+                        "Get": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        },
+                        "Post": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "ms:GetStyles": {
+                    "Format": {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "#text": "text/xml"
+                    },
+                    "DCPType": {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "HTTP": {
+                        "Get": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        },
+                        "Post": {
+                          "OnlineResource": {
+                            "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                            "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "Exception": {
+                  "Format": [
+                    "XML",
+                    "INIMAGE",
+                    "BLANK"
+                  ]
+                },
+                "sld:UserDefinedSymbolization": {
+                  "@SupportSLD": "1",
+                  "@UserLayer": "0",
+                  "@UserStyle": "1",
+                  "@RemoteWFS": "0",
+                  "@InlineFeature": "0",
+                  "@RemoteWCS": "0"
+                },
+                "Layer": {
+                  "Name": "WFS_server",
+                  "Title": "WMS Demo Server for MapServer",
+                  "Abstract": "WFS_server",
+                  "CRS": [
+                    "EPSG:2056",
+                    "EPSG:4326",
+                    "EPSG:3857",
+                    "EPSG:21781"
+                  ],
+                  "EX_GeographicBoundingBox": {
+                    "westBoundLongitude": "7.208242",
+                    "eastBoundLongitude": "10.503531",
+                    "southBoundLatitude": "46.094159",
+                    "northBoundLatitude": "48.011492"
+                  },
+                  "BoundingBox": {
+                    "@CRS": "EPSG:2056",
+                    "@minx": "2.58274e+06",
+                    "@miny": "1.10892e+06",
+                    "@maxx": "2.82873e+06",
+                    "@maxy": "1.31774e+06"
+                  },
+                  "Layer": {
+                    "@queryable": "0",
+                    "@opaque": "0",
+                    "@cascaded": "0",
+                    "Name": "sections",
+                    "Title": "sections",
+                    "CRS": "EPSG:2056",
+                    "EX_GeographicBoundingBox": {
+                      "westBoundLongitude": "5.835815",
+                      "eastBoundLongitude": "10.979312",
+                      "southBoundLatitude": "45.659169",
+                      "northBoundLatitude": "47.869910"
+                    },
+                    "BoundingBox": {
+                      "@CRS": "EPSG:2056",
+                      "@minx": "2.48e+06",
+                      "@miny": "1.062e+06",
+                      "@maxx": "2.865e+06",
+                      "@maxy": "1.302e+06"
+                    },
+                    "MetadataURL": {
+                      "@type": "TC211",
+                      "Format": "text/xml",
+                      "OnlineResource": {
+                        "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                        "@xlink:type": "simple",
+                        "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?request=GetMetadata&layer=sections"
+                      }
+                    },
+                    "Style": {
+                      "Name": "default",
+                      "Title": "default",
+                      "LegendURL": {
+                        "@width": "110",
+                        "@height": "23",
+                        "Format": "image/png",
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:type": "simple",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=sections&format=image/png&STYLE=default"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "certificate": {
+            "subject": "CN=ms.web-gis.ch",
+            "issuer": "CN=YR2, O=Let's Encrypt, C=US",
+            "serialNumber": "05340844AFED13647ED5903708293B075A32",
+            "thumbprint": "04BA3BA99DB9DFBEB74B99AA95F7423BAA4259DA",
+            "notBeforeUtc": "2026-07-15T06:11:10.0000000Z",
+            "expiresUtc": "2026-10-13T06:11:09.0000000Z",
+            "daysUntilExpiry": 43.0,
+            "isExpired": false,
+            "expiresSoon": false,
+            "signatureAlgorithm": "sha256RSA",
+            "publicKeyAlgorithm": "RSA",
+            "keySize": 3072,
+            "subjectAltNames": [
+              "ms.web-gis.ch",
+              "www.web-gis.ch"
+            ],
+            "cipherSuite": "TLS_AES_256_GCM_SHA384",
+            "parsedSubject": {
+              "CN": "ms.web-gis.ch"
+            },
+            "parsedIssuer": {
+              "CN": "YR2",
+              "O": "Let's Encrypt",
+              "C": "US"
+            }
+          }
+        }
+      },
+      "extract-service-info": {
+        "status": "succeeded",
+        "output": {
+          "serviceTitle": "WMS Demo Server for MapServer",
+          "wmsVersion": "1.3.0",
+          "maxWidth": "4096",
+          "maxHeight": "4096",
+          "onlineResource": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?",
+          "rootLayerTitle": "WMS Demo Server for MapServer",
+          "layerName": "sections",
+          "layerTitle": "sections",
+          "layerCrs": "EPSG:2056"
+        }
+      }
+    }
+  },
+  "Steps": [
+    {
+      "StepId": "get-capabilities",
+      "Status": 1,
+      "StartedUtc": "2026-08-30T22:13:28.6684566+00:00",
+      "CompletedUtc": "2026-08-30T22:13:28.9576858+00:00",
+      "Output": {
+        "statusCode": 200,
+        "isSuccess": true,
+        "responseTimeMs": 185,
+        "headers": {
+          "Transfer-Encoding": "chunked",
+          "Vary": "Accept-Encoding",
+          "Server": "Microsoft-IIS/10.0",
+          "WWW-Authenticate": "Basic",
+          "X-Powered-By": "ASP.NET",
+          "Date": "Sun, 30 Aug 2026 22:13:28 GMT",
+          "Content-Type": "text/xml"
+        },
+        "body": {
+          "?xml": {
+            "@version": "1.0",
+            "@encoding": "UTF-8",
+            "@standalone": "no"
+          },
+          "WMS_Capabilities": {
+            "@version": "1.3.0",
+            "@xmlns": "http://www.opengis.net/wms",
+            "@xmlns:sld": "http://www.opengis.net/sld",
+            "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+            "@xmlns:ms": "http://mapserver.gis.umn.edu/mapserver",
+            "@xsi:schemaLocation": "http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  http://mapserver.gis.umn.edu/mapserver https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?service=WMS&version=1.3.0&request=GetSchemaExtension",
+            "Service": {
+              "Name": "WMS",
+              "Title": "WMS Demo Server for MapServer",
+              "OnlineResource": {
+                "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+              },
+              "ContactInformation": "",
+              "MaxWidth": "4096",
+              "MaxHeight": "4096"
+            },
+            "Capability": {
+              "Request": {
+                "GetCapabilities": {
+                  "Format": "text/xml",
+                  "DCPType": {
+                    "HTTP": {
+                      "Get": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      },
+                      "Post": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      }
+                    }
+                  }
+                },
+                "GetMap": {
+                  "Format": [
+                    "image/png",
+                    "image/jpeg",
+                    "image/png; mode=8bit",
+                    "image/vnd.jpeg-png",
+                    "image/vnd.jpeg-png8",
+                    "application/x-pdf",
+                    "image/svg+xml",
+                    "image/tiff",
+                    "application/vnd.mapbox-vector-tile",
+                    "application/x-protobuf",
+                    "application/json"
+                  ],
+                  "DCPType": {
+                    "HTTP": {
+                      "Get": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      },
+                      "Post": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      }
+                    }
+                  }
+                },
+                "GetFeatureInfo": {
+                  "Format": [
+                    "text/plain",
+                    "application/vnd.ogc.gml"
+                  ],
+                  "DCPType": {
+                    "HTTP": {
+                      "Get": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      },
+                      "Post": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      }
+                    }
+                  }
+                },
+                "sld:DescribeLayer": {
+                  "Format": {
+                    "@xmlns": "http://www.opengis.net/wms",
+                    "#text": "text/xml"
+                  },
+                  "DCPType": {
+                    "@xmlns": "http://www.opengis.net/wms",
+                    "HTTP": {
+                      "Get": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      },
+                      "Post": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      }
+                    }
+                  }
+                },
+                "sld:GetLegendGraphic": {
+                  "Format": [
+                    {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "#text": "image/png"
+                    },
+                    {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "#text": "image/jpeg"
+                    },
+                    {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "#text": "image/png; mode=8bit"
+                    },
+                    {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "#text": "image/vnd.jpeg-png"
+                    },
+                    {
+                      "@xmlns": "http://www.opengis.net/wms",
+                      "#text": "image/vnd.jpeg-png8"
+                    }
+                  ],
+                  "DCPType": {
+                    "@xmlns": "http://www.opengis.net/wms",
+                    "HTTP": {
+                      "Get": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      },
+                      "Post": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      }
+                    }
+                  }
+                },
+                "ms:GetStyles": {
+                  "Format": {
+                    "@xmlns": "http://www.opengis.net/wms",
+                    "#text": "text/xml"
+                  },
+                  "DCPType": {
+                    "@xmlns": "http://www.opengis.net/wms",
+                    "HTTP": {
+                      "Get": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      },
+                      "Post": {
+                        "OnlineResource": {
+                          "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                          "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "Exception": {
+                "Format": [
+                  "XML",
+                  "INIMAGE",
+                  "BLANK"
+                ]
+              },
+              "sld:UserDefinedSymbolization": {
+                "@SupportSLD": "1",
+                "@UserLayer": "0",
+                "@UserStyle": "1",
+                "@RemoteWFS": "0",
+                "@InlineFeature": "0",
+                "@RemoteWCS": "0"
+              },
+              "Layer": {
+                "Name": "WFS_server",
+                "Title": "WMS Demo Server for MapServer",
+                "Abstract": "WFS_server",
+                "CRS": [
+                  "EPSG:2056",
+                  "EPSG:4326",
+                  "EPSG:3857",
+                  "EPSG:21781"
+                ],
+                "EX_GeographicBoundingBox": {
+                  "westBoundLongitude": "7.208242",
+                  "eastBoundLongitude": "10.503531",
+                  "southBoundLatitude": "46.094159",
+                  "northBoundLatitude": "48.011492"
+                },
+                "BoundingBox": {
+                  "@CRS": "EPSG:2056",
+                  "@minx": "2.58274e+06",
+                  "@miny": "1.10892e+06",
+                  "@maxx": "2.82873e+06",
+                  "@maxy": "1.31774e+06"
+                },
+                "Layer": {
+                  "@queryable": "0",
+                  "@opaque": "0",
+                  "@cascaded": "0",
+                  "Name": "sections",
+                  "Title": "sections",
+                  "CRS": "EPSG:2056",
+                  "EX_GeographicBoundingBox": {
+                    "westBoundLongitude": "5.835815",
+                    "eastBoundLongitude": "10.979312",
+                    "southBoundLatitude": "45.659169",
+                    "northBoundLatitude": "47.869910"
+                  },
+                  "BoundingBox": {
+                    "@CRS": "EPSG:2056",
+                    "@minx": "2.48e+06",
+                    "@miny": "1.062e+06",
+                    "@maxx": "2.865e+06",
+                    "@maxy": "1.302e+06"
+                  },
+                  "MetadataURL": {
+                    "@type": "TC211",
+                    "Format": "text/xml",
+                    "OnlineResource": {
+                      "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                      "@xlink:type": "simple",
+                      "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?request=GetMetadata&layer=sections"
+                    }
+                  },
+                  "Style": {
+                    "Name": "default",
+                    "Title": "default",
+                    "LegendURL": {
+                      "@width": "110",
+                      "@height": "23",
+                      "Format": "image/png",
+                      "OnlineResource": {
+                        "@xmlns:xlink": "http://www.w3.org/1999/xlink",
+                        "@xlink:type": "simple",
+                        "@xlink:href": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?version=1.3.0&service=WMS&request=GetLegendGraphic&sld_version=1.1.0&layer=sections&format=image/png&STYLE=default"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "certificate": {
+          "subject": "CN=ms.web-gis.ch",
+          "issuer": "CN=YR2, O=Let's Encrypt, C=US",
+          "serialNumber": "05340844AFED13647ED5903708293B075A32",
+          "thumbprint": "04BA3BA99DB9DFBEB74B99AA95F7423BAA4259DA",
+          "notBeforeUtc": "2026-07-15T06:11:10.0000000Z",
+          "expiresUtc": "2026-10-13T06:11:09.0000000Z",
+          "daysUntilExpiry": 43.0,
+          "isExpired": false,
+          "expiresSoon": false,
+          "signatureAlgorithm": "sha256RSA",
+          "publicKeyAlgorithm": "RSA",
+          "keySize": 3072,
+          "subjectAltNames": [
+            "ms.web-gis.ch",
+            "www.web-gis.ch"
+          ],
+          "cipherSuite": "TLS_AES_256_GCM_SHA384",
+          "parsedSubject": {
+            "CN": "ms.web-gis.ch"
+          },
+          "parsedIssuer": {
+            "CN": "YR2",
+            "O": "Let's Encrypt",
+            "C": "US"
+          }
+        }
+      },
+      "ErrorCode": null,
+      "Error": null
+    },
+    {
+      "StepId": "extract-service-info",
+      "Status": 1,
+      "StartedUtc": "2026-08-30T22:13:28.9577313+00:00",
+      "CompletedUtc": "2026-08-30T22:13:28.9598933+00:00",
+      "Output": {
+        "serviceTitle": "WMS Demo Server for MapServer",
+        "wmsVersion": "1.3.0",
+        "maxWidth": "4096",
+        "maxHeight": "4096",
+        "onlineResource": "https://ms.web-gis.ch/api/Ogc/e5a071f2-ffce-4d18-9f67-dfd8052cd7c9?",
+        "rootLayerTitle": "WMS Demo Server for MapServer",
+        "layerName": "sections",
+        "layerTitle": "sections",
+        "layerCrs": "EPSG:2056"
+      },
+      "ErrorCode": null,
+      "Error": null
+    }
+  ],
+  "ErrorCode": null,
+  "Error": null
+}

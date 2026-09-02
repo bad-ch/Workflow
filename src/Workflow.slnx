@@ -1,0 +1,7 @@
+<Solution>
+    <Project Path="Workflow.Api/Workflow.Api.csproj" />
+    <Project Path="Workflow.Application/Workflow.Application.csproj" />
+    <Project Path="Workflow.Cli/Workflow.Cli.csproj" />
+    <Project Path="Workflow.Persistence/Workflow.Persistence.csproj" />
+    <Project Path="Workflow.UnitTests/Workflow.UnitTests.csproj" />
+</Solution>

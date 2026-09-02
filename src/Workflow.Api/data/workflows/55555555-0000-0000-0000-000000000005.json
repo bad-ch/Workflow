@@ -1,0 +1,110 @@
+{
+  "Id": "55555555-0000-0000-0000-000000000005",
+  "Name": "Demo — Extract Data from JSON Responses",
+  "Enabled": true,
+  "Trigger": {
+    "Type": "Manual"
+  },
+  "Schedule": null,
+  "Steps": [
+    {
+      "type": "http",
+      "Id": "get-order",
+      "Name": "GET Order (nested JSON response)",
+      "Method": "GET",
+      "Url": "https://api.example.com/orders/{{input.orderId}}",
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "The response body looks like: { id, status, total, customer: { id, name, email }, items: [ { sku, qty, price } ] }",
+
+      "type": "script",
+      "Id": "extract-fields",
+      "Name": "Extract fields from the JSON body",
+      "Assign": {
+        "orderId":       "{{steps.get-order.output.body.id}}",
+        "orderStatus":   "{{steps.get-order.output.body.status}}",
+        "orderTotal":    "{{steps.get-order.output.body.total}}",
+
+        "customerId":    "{{steps.get-order.output.body.customer.id}}",
+        "customerName":  "{{steps.get-order.output.body.customer.name}}",
+        "customerEmail": "{{steps.get-order.output.body.customer.email}}",
+
+        "firstItemSku":  "{{steps.get-order.output.body.items[0].sku}}",
+        "firstItemQty":  "{{steps.get-order.output.body.items[0].qty}}",
+        "secondItemSku": "{{steps.get-order.output.body.items[1].sku}}"
+      },
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "Use extracted variables to build a follow-up POST",
+      "type": "http",
+      "Id": "notify-customer",
+      "Name": "POST Notification to Customer",
+      "Method": "POST",
+      "Url": "https://api.example.com/notifications",
+      "Headers": {
+        "Content-Type": "application/json"
+      },
+      "Body": {
+        "to":      "{{variables.customerEmail}}",
+        "subject": "Your order {{variables.orderId}} is {{variables.orderStatus}}",
+        "total":   "{{variables.orderTotal}}"
+      },
+      "TimeoutSeconds": 10,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "Pass the entire items array straight through to another endpoint",
+      "type": "http",
+      "Id": "forward-items",
+      "Name": "Forward Full Items Array",
+      "Method": "POST",
+      "Url": "https://api.example.com/warehouse/pick-list",
+      "Headers": {
+        "Content-Type": "application/json"
+      },
+      "Body": {
+        "orderId": "{{steps.get-order.output.body.id}}",
+        "items":   "{{steps.get-order.output.body.items}}"
+      },
+      "TimeoutSeconds": 15,
+      "ContinueOnError": false
+    },
+
+    {
+      "$comment": "Loop over the items array — each item is available as {{variables.item}}",
+      "type": "loop",
+      "Id": "process-each-item",
+      "Name": "Loop Over Items",
+      "ItemsExpression": "steps.get-order.output.body.items",
+      "ItemVariable": "item",
+      "MaxIterations": 100,
+      "Steps": [
+        {
+          "type": "http",
+          "Id": "reserve-stock",
+          "Name": "Reserve Stock for Item",
+          "Method": "POST",
+          "Url": "https://api.example.com/stock/reserve",
+          "Headers": {
+            "Content-Type": "application/json"
+          },
+          "Body": {
+            "sku":      "{{variables.item.sku}}",
+            "quantity": "{{variables.item.qty}}"
+          },
+          "TimeoutSeconds": 10,
+          "ContinueOnError": true
+        }
+      ],
+      "ContinueOnError": false
+    }
+  ],
+  "CreatedUtc": "2025-04-01T00:00:00+00:00",
+  "UpdatedUtc": "2025-04-01T00:00:00+00:00"
+}
